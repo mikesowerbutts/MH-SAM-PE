@@ -1,0 +1,11 @@
+//
+// Prefix header for all source files of the 'MH SAM PE' target in the 'MH SAM PE' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+    #import <UIKit/UIKit.h>
+	#import "WSDataModelManager.h"
+	#import "WSComparrison.h"
+	#import <QuartzCore/QuartzCore.h>
+#endif

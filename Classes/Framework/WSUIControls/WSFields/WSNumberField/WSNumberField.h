@@ -1,0 +1,14 @@
+//
+//  WSNumberField.h
+//  BlueSheet
+//
+//  Created by Toby Widdowson on 21/05/2010.
+//  Copyright 2010 White Springs Ltd. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "WSTextField.h"
+
+@interface WSNumberField : WSTextField<UITextFieldDelegate> {
+}
+@end

@@ -1,0 +1,25 @@
+﻿<?xml version='1.0' encoding='utf-8' ?>
+<tocdata>
+<book name="Welcome" url="First_Topic.htm" >
+  <item name="Getting Started" url="Getting_Started.htm" />
+  <item name="Search &amp; Advanced Search" url="Search_&amp;_Advanced_Search.htm" />
+  <item name="CRM Preferences" url="CRM_Preferences.htm" />
+  <item name="Download / Upload" url="Download___Upload.htm" />
+  <item name="Delete Record" url="Delete_Record.htm" />
+  <item name="Sort Table Rows" url="Sort_Table_Rows.htm" />
+  <item name="Launch Bar Controls" url="Launch_Bar_Controls.htm" />
+</book>
+<book name="Features &amp; Functions" url="Features_&amp;_Functions.htm" >
+  <item name="Section Headers" url="Section_Headers.htm" />
+  <item name="Full Screen Dialogs" url="Full_Screen_Dialogs.htm" />
+  <item name="Strengths &amp; Red Flags" url="Strength_&amp;_Red_Flags.htm" />
+  <item name="Icons" url="Icons.htm" />
+  <item name="Contact Search" url="Contact_Search.htm" />
+  <item name="Pick Lists" url="Pick_Lists.htm" />
+  <item name="Calendar / Date Fields" url="Calendar___Date_Fields.htm" />
+  <item name="Screen Shots" url="Screen_Shots.htm" />
+  <item name="Start-up Wizard" url="Start-up_Wizard.htm" />
+  <item name="Crash Recovery" url="Crash_Recovery.htm" />
+</book>
+
+</tocdata>
