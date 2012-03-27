@@ -35,4 +35,7 @@
 	tableViewController.showAllRows = NO;
 	return self;
 }
+-(void)dealloc{
+    [super dealloc];
+}
 @end

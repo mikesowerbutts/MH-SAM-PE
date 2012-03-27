@@ -24,4 +24,9 @@
 	}
 	return [retData autorelease];
 }
+/*
+-(void)dealloc{
+    [super dealloc];
+}
+*/
 @end

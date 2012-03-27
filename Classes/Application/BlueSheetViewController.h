@@ -198,6 +198,7 @@
 @property(nonatomic, retain)InformationNeeded_Controller *informationNeeded_Controller;
 
 - (id)initWithNibNameAndXML:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil XML:(WSXMLObject *)theXML;
-
+-(NSString *)GetTypeByOrder:(NSString *)order node:(WSXMLObject *)theNode;
+-(void)BuildCustomHeader;
 @end
 

@@ -37,13 +37,12 @@
 		WSContact *whoCon = (WSContact *)[[[[WSDataModelManager instance] getByID:ID] getContacts] getContactByID:action.whoID];
 		assignedToKVP = [[[WSKVPair alloc] initWithKeyValue:whoCon != nil ? whoCon.ID : @"" aValue:whoCon != nil ? whoCon.contactName : @""] autorelease];
 		
-		whenAssignedToDate = action.when;
+		whenAssignedToDate = [[action.when copy] autorelease];
 		
 		WSContact *conCon = (WSContact *)[[[[WSDataModelManager instance] getByID:ID] getContacts] getContactByID:action.ownerID];
 		contactKVP = [[[WSKVPair alloc] initWithKeyValue:conCon != nil ? conCon.ID : @"" aValue:conCon != nil ? conCon.contactName : @""] autorelease];
-		[conCon release];
         
-		whenContactDate = action.completed;
+		whenContactDate = [[action.completed copy] autorelease];
 		
 		statusKVP = action.status;
         crmActivityStr = [action.check stringValue];
@@ -57,27 +56,27 @@
 	else
 		self.source_Controller.value = sourceStr;
 	if(self.assignedTo_Controller == nil)
-		self.assignedTo_Controller = [[[WSContactListPickerController alloc] initWithFieldListDataAndValue:assignedTo listData:[[[bluesheetDataModel getContacts] GetInternalContacts] GetKVPairList] value:assignedToKVP multiSelect:NO contactType:@"I"] autorelease];//Leak
+		self.assignedTo_Controller = [[[WSContactListPickerController alloc] initWithFieldListDataAndValue:assignedTo listData:[[[bluesheetDataModel getContacts] GetInternalContacts] GetKVPairList] value:assignedToKVP multiSelect:NO contactType:@"I"] autorelease];
 	else
 		self.assignedTo_Controller.value = assignedToKVP;
 	if(self.whenAssignedTo_Controller == nil)
-		self.whenAssignedTo_Controller = [[[WSDateFieldController alloc] initWithFieldAndDate:whenAssignedTo currentDate:[whenAssignedToDate getXMLFormattedDate]] autorelease];//Leak
+		self.whenAssignedTo_Controller = [[[WSDateFieldController alloc] initWithFieldAndDate:whenAssignedTo currentDate:[whenAssignedToDate getXMLFormattedDate]] autorelease];
 	else
 		self.whenAssignedTo_Controller.date = whenAssignedToDate;
 	if(self.contact_Controller == nil)
-		self.contact_Controller = [[[WSContactListPickerController alloc] initWithFieldListDataAndValue:contact listData:[[[bluesheetDataModel getContacts] GetExternalContacts] GetKVPairList] value:contactKVP multiSelect:NO contactType:@"E"] autorelease];//Leak
+		self.contact_Controller = [[[WSContactListPickerController alloc] initWithFieldListDataAndValue:contact listData:[[[bluesheetDataModel getContacts] GetExternalContacts] GetKVPairList] value:contactKVP multiSelect:NO contactType:@"E"] autorelease];
 	else
 		self.contact_Controller.value = contactKVP;
 	if(self.whenContact_Controller == nil)
-		self.whenContact_Controller = [[[WSDateFieldController alloc] initWithFieldAndDate:whenContact currentDate:[whenContactDate getXMLFormattedDate]] autorelease];//Leak
+		self.whenContact_Controller = [[[WSDateFieldController alloc] initWithFieldAndDate:whenContact currentDate:[whenContactDate getXMLFormattedDate]] autorelease];
 	else
 		self.whenContact_Controller.date = whenContactDate;
 	if(self.status_Controller == nil)
-		self.status_Controller = [[[WSListPickerController alloc] initWithFieldListDataAndValue:status listData:[bluesheetDataModel actionStatus] value:statusKVP multiSelect:NO] autorelease];//Leak
+		self.status_Controller = [[[WSListPickerController alloc] initWithFieldListDataAndValue:status listData:[bluesheetDataModel actionStatus] value:statusKVP multiSelect:NO] autorelease];
 	else
 		self.status_Controller.value = statusKVP;
     if(self.crmActivityController == nil){
-        self.crmActivityController = [[[WSToggleButtonController alloc] initWithButton:self.crmActivity ID:ID] autorelease];//Leak
+        self.crmActivityController = [[[WSToggleButtonController alloc] initWithButton:self.crmActivity ID:ID] autorelease];
     }
     [self.crmActivityController setChecked:crmActivityStr];
     
@@ -91,6 +90,7 @@
 		action.sourceDescription = source.textView.text;
 		action.whoID = [assignedTo_Controller.selectedPairs.items count] > 0 ? [[assignedTo_Controller.selectedPairs.items objectAtIndex:0] key] : action.whoID;
 		action.when = whenAssignedTo_Controller.date;
+        //[contact_Controller.selectedPairs describe];
 		action.ownerID = [contact_Controller.selectedPairs.items count] > 0 ? [[contact_Controller.selectedPairs.items objectAtIndex:0] key] : action.ownerID;
 		action.completed = whenContact_Controller.date;
 		action.status = ([status_Controller.selectedPairs.items count] > 0 ? [status_Controller.selectedPairs.items objectAtIndex:0] : [[[WSKVPair alloc] initWithKeyValue:@"" aValue:@""] autorelease]);

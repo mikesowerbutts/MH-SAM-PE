@@ -20,7 +20,7 @@
 -(id)doInit:(WSTableView *)theTable data:(WSXMLObject *)theData ID:(NSString *)theID{
 	[super doInit:theTable data:theData notificationType:@"Strength" ID:theID];
 	BlueSheetDataModel *bluesheetDataModel = (BlueSheetDataModel *)[[WSDataModelManager instance] getByID:ID];
-	data = theData;
+	self.data = theData;
 	NSMutableArray *colTypes = [[NSMutableArray alloc] init];
 	[colTypes addObject:[[[WSColumnInfo alloc] initID] autorelease]];
 	[colTypes addObject:[[[WSColumnInfo alloc] initWithAlignment:@"STRING" columnWidth:100 columnHeader:@"Strength" columnTextAlign:UITextAlignmentLeft] autorelease]];

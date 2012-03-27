@@ -10,10 +10,6 @@
 #import "BSInfluence.h"
 
 @implementation BSInfluenceCoveredDataPicker
--(id)initWithList:(NSMutableArray *)theList ID:(NSString *)theID{
-	[super initWithList:theList ID:theID];
-	return self;
-}
 -(NSMutableArray *)getData{
 	NSMutableArray *retData = [[NSMutableArray alloc] init];
 	for(int i = 0; i < [objList count]; i++){
@@ -22,6 +18,6 @@
 		[retData addObject:inf.cover.value];
 		[retData addObject:inf.coverDescription];
 	}
-	return [retData autorelease];//Leak
+	return [retData autorelease];
 }
 @end

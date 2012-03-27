@@ -8,7 +8,6 @@
 
 #import "WSAppletDataPicker.h"
 
-
 @implementation WSAppletDataPicker
 -(void)removeObjectByID:(NSString *)idToRemove{
 	for(int i = 0; i < [objList count]; i++){

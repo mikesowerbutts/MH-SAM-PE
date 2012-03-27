@@ -27,7 +27,9 @@
 	[colTypes addObject:[[[WSColumnInfo alloc] initWithAlignment:@"STRING" columnWidth:30 columnHeader:@"Contact" columnTextAlign:UITextAlignmentLeft] autorelease]];
 	[colTypes addObject:[[[WSColumnInfo alloc] initWithAlignment:@"DATE" columnWidth:20 columnHeader:@"When" columnTextAlign:UITextAlignmentLeft] autorelease]];
 	[colTypes addObject:[[[WSColumnInfo alloc] initWithAlignment:@"BOOLEANCHECK" columnWidth:20 columnHeader:@"Best Action" columnTextAlign:UITextAlignmentCenter] autorelease]];
-	WSTableViewDataController *dataCon = [[WSTableViewDataController alloc] initWithPicker:[[[BSActionPossibleActionsDataPicker alloc] initWithList:[[bluesheetDataModel getActions] items] ID:ID] autorelease]];
+    BSActionPossibleActionsDataPicker *dataPicker = [[BSActionPossibleActionsDataPicker alloc] initWithList:[[bluesheetDataModel getActions] items] ID:ID];
+	WSTableViewDataController *dataCon = [[WSTableViewDataController alloc] initWithPicker:dataPicker];
+    [dataPicker release];
 	self.tableViewController = [[[PossibleActionsTableViewController alloc] initWithColsAndTable:dataCon readOnly:NO multiSelect:NO selectedRowsData:nil table:theTable columnTypes:colTypes tableTitle:@"POSSIBLE ACTIONS" groupMode:@"NONE" showColHeaders:YES ID:ID] autorelease];
 	tableViewController.mode = @"NORMAL";
 	tableViewController.editMode = @"DIALOG";

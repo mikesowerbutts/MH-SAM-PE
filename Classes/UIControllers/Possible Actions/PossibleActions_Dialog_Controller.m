@@ -22,7 +22,7 @@
 	[self.bestAction_Controller.stateImages addObject:@""];
 	if(theDataObjID != nil){
 		WSAction *actTemp = (WSAction *)[[bluesheetDataModel getActions] getObjectByID:theDataObjID];
-		self.action = [[[WSAction alloc] initWithWSAction:actTemp] autorelease];//[[actTemp copy] autorelease];
+		self.action = [[[WSAction alloc] initWithWSAction:actTemp] autorelease];;
 	}
 	else
 		self.action = [[[WSAction alloc] initWithXML:nil ID:ID] autorelease];
@@ -82,7 +82,7 @@
 		action.what = description.textView.text;
 		action.whoID = [contact_Controller.selectedPairs.items count] > 0 ? [[contact_Controller.selectedPairs.items objectAtIndex:0] key] : @"";
 		action.when = when_Controller.date;
-		action.completed = when_Controller.date;
+		action.completed = completed_Controller.date;
 		action.ownerID = [assignedTo_Controller.selectedPairs.items count] > 0 ? [[assignedTo_Controller.selectedPairs.items objectAtIndex:0] key] : @"";
 		action.status = ([status_Controller.selectedPairs.items count] > 0) ? [status_Controller.selectedPairs.items objectAtIndex:0] : [[WSKVPair alloc] initWithKeyValue:@"" aValue:@""];
 		action.type = [type_Controller.selectedPairs.items count] > 0 ? [type_Controller.selectedPairs.items objectAtIndex:0] : [[WSKVPair alloc] initWithKeyValue:@"" aValue:@""];

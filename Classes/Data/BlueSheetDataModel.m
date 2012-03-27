@@ -31,6 +31,7 @@
 #import "WSSlider.h"
 #import "BSAdequacyOfCPController.h"
 #import "BlueSheetViewController.h"
+#import "WSFieldController.h"
 
 
 @implementation BlueSheetDataModel
@@ -43,7 +44,7 @@
         self.lastSave = [theXML outerXML];
         self.readOnly = [[[WSBoolean alloc] initWithXML:[self.applicationData Get:@"ReadOnly"]] autorelease];
         self.manager = [[[WSBoolean alloc] initWithXML:[self.applicationData Get:@"Manager"]] autorelease];
-        self.transManager = [[[WSTranslationManager alloc] initWithContentNode:[[self.applicationData Get:@"ContentData"] retain]] autorelease];
+        self.transManager = [[[WSTranslationManager alloc] initWithContentNode:[self.applicationData Get:@"ContentData"]] autorelease];
         //Picklists
         self.currencyOptions = [[[WSKVPairList alloc] initWithXMLNode:[self.applicationData Get:@"DropListSettings/CurrencyOptions"]] autorelease];
         [self.currencyOptions removeEmpties];
@@ -71,25 +72,25 @@
         [self.idealCustomerCriteriaDropList removeEmpties];
         
         //Data
-        self.actionsList = [[[WSActionList alloc] init:[[self.fileData Get:@"Actions"] retain] ID:ID] autorelease];
-        actionsList.xmlNodeName = [[[NSString alloc] initWithString:@"Actions"] autorelease];
+        actionsList = [[WSActionList alloc] init:[[self.fileData Get:@"Actions"] retain] ID:ID];
+        self.actionsList.xmlNodeName = [[[NSString alloc] initWithString:@"Actions"] autorelease];
         
-        self.influencesList = [[[BSInfluenceList alloc] init:[self.fileData Get:@"Influences"] ID:ID] autorelease];
+        influencesList = [[BSInfluenceList alloc] init:[self.fileData Get:@"Influences"] ID:ID];
         self.influencesList.xmlNodeName = [[[NSString alloc] initWithString:@"Influences"] autorelease];
         
-        self.criteriasList = [[[BSCriteriaList alloc] init:[self.fileData Get:@"Criterias"] sourceList:self.idealCustomerCriteriaDropList ID:ID] autorelease];
+        criteriasList = [[BSCriteriaList alloc] init:[self.fileData Get:@"Criterias"] sourceList:self.idealCustomerCriteriaDropList ID:ID];
         self.criteriasList.xmlNodeName = [[[NSString alloc] initWithString:@"Criterias"] autorelease];
         
-        self.redFlagsList = [[[BSRedFlagList alloc] init:[self.fileData Get:@"RedFlags"] ID:ID] autorelease];
+        redFlagsList = [[BSRedFlagList alloc] init:[self.fileData Get:@"RedFlags"] ID:ID];
         self.redFlagsList.xmlNodeName = [[[NSString alloc] initWithString:@"RedFlags"] autorelease];
         
-        self.strengthsList = [[[BSStrengthList alloc] init:[self.fileData Get:@"Strengths"] ID:ID] autorelease];
+        strengthsList = [[BSStrengthList alloc] init:[self.fileData Get:@"Strengths"] ID:ID];
         self.strengthsList.xmlNodeName = [[[NSString alloc] initWithString:@"Strengths"] autorelease];
         
-        self.bestInfosList = [[[BSBestInfoList alloc] init:[self.fileData Get:@"BestInfos"] ID:ID] autorelease];
+        bestInfosList = [[BSBestInfoList alloc] init:[self.fileData Get:@"BestInfos"] ID:ID];
         self.bestInfosList.xmlNodeName = [[[NSString alloc] initWithString:@"BestInfos"] autorelease];
         
-        self.flagsList = [[[BSDragObjectList alloc] init:[self.fileData Get:@"Flags"] ID:ID] autorelease];
+        flagsList = [[BSDragObjectList alloc] init:[self.fileData Get:@"Flags"] ID:ID];
         self.flagsList.xmlNodeName = [[NSString alloc] initWithString:@"Flags"];
         
         self.ACP = [[[WSKVPair alloc] initWithKeyValue:[WSUtils StringFromNode:[self.fileData Get:@"AdequacyCP"]] aValue:[WSUtils StringFromNode:[self.fileData Get:@"AdequacyDescription"]]] autorelease];
@@ -119,7 +120,7 @@
 	return self.actionsList;
 }
 -(WSContactList *)getContacts{
-	return  self.contactsList;
+	return self.contactsList;
 }
 -(BSInfluenceList *)getInfluences{
 	return self.influencesList;
@@ -190,7 +191,9 @@
 	[fileData SetNodeValue:@"OppDate" newValue:[WSUtils URLEncode:[self.vc.oppDets_Date_Controller.date getXMLFormattedDate]]];
 	[fileData SetNodeValue:@"SalesPerson" newValue:[WSUtils URLEncode:self.vc.oppDets_SalesPerson.text]];
 	[fileData SetNodeValue:@"CVolume" newValue:[WSUtils URLEncode:self.vc.oppDets_CurrentVolume_Controller.currency.rawValue]];
+    [fileData SetNodeValue:@"CVolumeFormatted" newValue:[WSUtils URLEncode:self.vc.oppDets_CurrentVolume_Controller.textBox.text]];
 	[fileData SetNodeValue:@"PVolume" newValue:[WSUtils URLEncode:self.vc.oppDets_PotentialVolume_Controller.currency.rawValue]];
+    [fileData SetNodeValue:@"PVolumeFormatted" newValue:[WSUtils URLEncode:self.vc.oppDets_PotentialVolume_Controller.textBox.text]];
 	[fileData SetNodeValue:@"Product" newValue:[WSUtils URLEncode:self.vc.oppDets_Product.text]];
 	[fileData SetNodeValue:@"SalesUnits" newValue:self.vc.oppDets_Revenue_Controller.currency.rawValue];
 	[fileData SetNodeValue:@"CloseDate" newValue:[WSUtils URLEncode:[self.vc.oppDets_CloseDate_Controller.date getXMLFormattedDate]]];
@@ -230,10 +233,10 @@
     [date release];
     [salesPerson release];
     [accountName release];
-    //[currentVolume release];// Causes crash when running 'normally'
-    //[potentialVolume release];// Causes crash when running 'normally'
+    [currentVolume release];
+    [potentialVolume release];
     [product release];
-    //[revenue release];// Causes crash when running 'normally'
+    [revenue release];
     [closeDate release];
     [compType release];
     [competitors release];

@@ -16,6 +16,10 @@
 #import <Foundation/Foundation.h>
 #import <MessageUI/MessageUI.h>
 #import "WSPE_ConnectionStrings.h"
+#import "WSDate.h"
+#import "WSCRMOpportunityList.h"
+#import "WSCRMOpportunity.h"
+#import "WSXMLObject.h"
 
 @implementation MH_SAM_PEViewController
 @synthesize currentDM, progressDialog, activeOpportunity, connManager;
@@ -35,14 +39,15 @@
 	[self showWebBrowser:[[notification object] value] title:[[notification object] key] mode:@"WEB"];
 }
 -(void)createPrint:(NSNotification *)notification{
-	self.progressDialog = [WSProgressBarDialogController instance];
-	[self.progressDialog.label setValue:@"Creating PDF..."];
-	self.progressDialog.activityIndicator.hidden = NO;
-	[self.progressDialog.activityIndicator startAnimating];
-	self.progressDialog.progressBar.hidden = YES;
-	[self.progressDialog show];
 	if([WSUtils CanConnectToURL:[[WSPE_ConnectionStrings instance] Get:@"PrintCheckURL"]]){
 		[connManager initPOST:[[WSPE_ConnectionStrings instance] Get:@"PrintURL"] postData:[NSString stringWithFormat:@"xmlData=%@", [notification object]] tag:@"print"];
+        //NSLog(@"printXML: %@", [notification object]);
+        self.progressDialog = [WSProgressBarDialogController instance];
+        [self.progressDialog.label setValue:@"Creating PDF..."];
+        self.progressDialog.activityIndicator.hidden = NO;
+        [self.progressDialog.activityIndicator startAnimating];
+        self.progressDialog.progressBar.hidden = YES;
+        [self.progressDialog show];
 	}
 	else {
 		UIAlertView *al = [[[UIAlertView alloc] initWithTitle:@"Unable to create PDF" message:@"Your iPad is currently unable to connect to the Internet, which is required to create a PDF." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease];
@@ -55,6 +60,7 @@
 	if([connPair.key isEqualToString:@"print"]){
 		[self.progressDialog close];
 		NSMutableData *returnData = (NSMutableData *)connPair.dataValue;
+        //NSLog(@"returnData: %@", returnData);
 		if([returnData writeToFile:[NSString stringWithFormat:@"%@/Printout.pdf", [WSUtils GetDocsPath]] atomically:YES]){
 			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"PDF Created!" message:@"Your PDF has been successfully created and saved to your iPad, what would you like to do now?" delegate:self cancelButtonTitle:@"Nothing" otherButtonTitles:nil];
 			alert.tag = 2;
@@ -135,6 +141,13 @@
 -(void)saveOpportunityBlobXML:(NSNotification *)notification{
     NSString *path = [WSUtils GetFileInDocsWhichContains:[[notification object] key]];
     [WSUtils WriteStringToFile:path stringToSave:[[notification object] value]];
+    MH_SAM_PE_DataModel *dm = (MH_SAM_PE_DataModel *)[[WSDataModelManager instance] getByID:ID];
+    WSCRMOpportunityList *opps = [dm getCRMOpportunitiesList];
+    WSCRMOpportunity *opp = (WSCRMOpportunity *)[opps getObjectByID:[[notification object] key]];
+    [opp SetProp:@"LastModifiedDate" newValue:[NSString stringWithFormat:@"<LastModifiedDate>%@</LastModifiedDate>", [WSDate getWSDateNow]]];
+    opp.outOfDate = NO;
+    [dm saveOpportunities];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"CheckRecordsOutOfDate" object:nil];
 	UIAlertView *al = [[[UIAlertView alloc] initWithTitle:@"Information" message:@"Your Blue Sheet has been saved" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease];
     al.tag = 999;
 	[al show];

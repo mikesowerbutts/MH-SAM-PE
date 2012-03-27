@@ -32,6 +32,8 @@ InformationNeeded_Controller *informationNeeded_Controller;
         bluesheetDataModel.vc = self;
         BSTopButtons *topBtns = [[BSTopButtons alloc] initWithButtons:eLearningBtn managersNotesBtn:managersNotesBtn notesBtn:notesBtn printBtn:printBtn helpBtn:helpBtn saveBtn:saveBtn exitBtn:exitBtn ID:ID Owner:self];	
         [super viewDidLoad];
+        //Build Header
+        [self BuildCustomHeader];
         // Drag Drop
         [[self.dragDrop init] autorelease];
         if(bluesheetDataModel.manager.value)
@@ -57,6 +59,11 @@ InformationNeeded_Controller *informationNeeded_Controller;
         self.oppDets_Date.delegate = self;
         [self.view addSubview:self.oppDets_Date];
         self.oppDets_Date_Controller = [[[WSDateFieldController alloc] initWithFieldAndWSDate:oppDets_Date currentDate:bluesheetDataModel.date] autorelease];
+        WSXMLObject *lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/OppDate"];
+        if(bluesheetDataModel.manager.value)
+            self.oppDets_CloseDate_Controller.editable = NO;
+        else if(lockN != nil && [[lockN innerXML] isEqualToString:@"true"])
+            self.oppDets_CloseDate_Controller.locked = YES;
         [oppDets_Date checkFlag:@"1.1"];
         
         self.oppDets_SalesPerson = [[[MHTextField alloc] initWithFrame:CGRectMake(226, 109, 115, 25)] autorelease];
@@ -64,9 +71,11 @@ InformationNeeded_Controller *informationNeeded_Controller;
         self.oppDets_SalesPerson.delegate = self;
         [self.view addSubview:self.oppDets_SalesPerson];
         self.oppDets_SalesPerson_Controller = [[[WSTextFieldController alloc] initWithFieldAndValue:oppDets_SalesPerson value:[WSUtils StringFromNode:[[[WSDataModelManager instance] getByID:ID].fileData Get:@"SalesPerson"]]] autorelease];
-        WSXMLObject *lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/SalesPerson"];
-        if((lockN != nil && [[lockN innerXML] isEqualToString:@"true"]) || bluesheetDataModel.manager.value)
+        lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/SalesPerson"];
+        if(bluesheetDataModel.manager.value)
             self.oppDets_SalesPerson_Controller.editable = NO;
+        else if((lockN != nil && [[lockN innerXML] isEqualToString:@"true"]))
+            self.oppDets_SalesPerson_Controller.locked = YES;
         [oppDets_SalesPerson checkFlag:@"1.2"];
             
         self.oppDets_Account = [[[MHTextField alloc] initWithFrame:CGRectMake(61, 135, 280, 25)] autorelease];
@@ -81,19 +90,25 @@ InformationNeeded_Controller *informationNeeded_Controller;
         self.oppDets_CurrentVolume.font = [[WSStyle instance] getNormalFont];
         self.oppDets_CurrentVolume.delegate = self;
         [self.view addSubview:self.oppDets_CurrentVolume];
-        self.oppDets_CurrentVolume_Controller = [[[WSCurrencyFieldController alloc] initWithFieldAndCurrencyValue:oppDets_CurrentVolume value:[bluesheetDataModel.currentVolume copy]] autorelease];
-        //lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/SalesUnits"];
-        //if((lockN != nil && [[lockN innerXML] isEqualToString:@"true"]) || bluesheetDataModel.manager.value)
-            //self.oppDets_CurrentVolume_Controller.editable = NO;
+        self.oppDets_CurrentVolume_Controller = [[[WSCurrencyFieldController alloc] initWithFieldAndCurrencyValue:oppDets_CurrentVolume value:[[bluesheetDataModel.currentVolume copy] autorelease]] autorelease];
+        lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/CVolume"];
+        if(bluesheetDataModel.manager.value)
+            self.oppDets_CurrentVolume_Controller.editable = NO;
+        else if((lockN != nil && [[lockN innerXML] isEqualToString:@"true"]))
+            self.oppDets_CurrentVolume_Controller.locked = YES;
+        [oppDets_CurrentVolume checkFlag:@"1.4"];
         
         self.oppDets_PotentialVolume = [[[MHTextField alloc] initWithFrame:CGRectMake(109, 187, 232, 25)] autorelease];
         self.oppDets_PotentialVolume.font = [[WSStyle instance] getNormalFont];
         self.oppDets_PotentialVolume.delegate = self;
         [self.view addSubview:self.oppDets_PotentialVolume];
-        self.oppDets_PotentialVolume_Controller = [[[WSCurrencyFieldController alloc] initWithFieldAndCurrencyValue:oppDets_PotentialVolume value:[bluesheetDataModel.potentialVolume copy]] autorelease];	
-        //lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/SalesUnits"];
-        //if((lockN != nil && [[lockN innerXML] isEqualToString:@"true"]) || bluesheetDataModel.manager.value)
-            //self.oppDets_PotentialVolume_Controller.editable = NO;
+        self.oppDets_PotentialVolume_Controller = [[[WSCurrencyFieldController alloc] initWithFieldAndCurrencyValue:oppDets_PotentialVolume value:[[bluesheetDataModel.potentialVolume copy] autorelease]] autorelease];	
+        lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/PVolume"];
+        if(bluesheetDataModel.manager.value)
+            self.oppDets_PotentialVolume_Controller.editable = NO;
+        else if((lockN != nil && [[lockN innerXML] isEqualToString:@"true"]))
+            self.oppDets_PotentialVolume_Controller.locked = YES;
+        [oppDets_PotentialVolume checkFlag:@"1.5"];
         
         self.oppDets_Product = [[[MHTextField alloc] initWithFrame:CGRectMake(61, 230, 280, 25)] autorelease];
         self.oppDets_Product.font = [[WSStyle instance] getNormalFont];
@@ -101,21 +116,24 @@ InformationNeeded_Controller *informationNeeded_Controller;
         [self.view addSubview:self.oppDets_Product];
         self.oppDets_Product_Controller = [[[WSTextFieldController alloc] initWithFieldAndValue:oppDets_Product value:bluesheetDataModel.product] autorelease];
         lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/Product"];
-        NSLog(@"lockN: %@", [lockN innerXML]);
-        if((lockN != nil && [[lockN innerXML] isEqualToString:@"true"]) || bluesheetDataModel.manager.value)
+        if(bluesheetDataModel.manager.value)
             self.oppDets_Product_Controller.editable = NO;
+        else if((lockN != nil && [[lockN innerXML] isEqualToString:@"true"]))
+            self.oppDets_Product_Controller.locked = YES;
+        
         [oppDets_Product checkFlag:@"1.6"];
 	
         self.oppDets_Revenue = [[[MHTextField alloc] initWithFrame:CGRectMake(67, 256, 274, 25)] autorelease];
         self.oppDets_Revenue.font = [[WSStyle instance] getNormalFont];
         self.oppDets_Revenue.delegate = self;
         [self.view addSubview:self.oppDets_Revenue];
-        self.oppDets_Revenue_Controller = [[[WSCurrencyFieldController alloc] initWithFieldAndCurrencyValue:oppDets_Revenue value:[bluesheetDataModel.revenue copy]] autorelease];
+        self.oppDets_Revenue_Controller = [[[WSCurrencyFieldController alloc] initWithFieldAndCurrencyValue:oppDets_Revenue value:[[bluesheetDataModel.revenue copy] autorelease]] autorelease];
         lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/SalesUnits"];
-        if(lockN != nil){
-          if([[lockN innerXML] isEqualToString:@"true"] || bluesheetDataModel.manager.value)
+        if(bluesheetDataModel.manager.value)
             self.oppDets_Revenue_Controller.editable = NO;
-        }
+        else if(lockN != nil && [[lockN innerXML] isEqualToString:@"true"])
+            self.oppDets_Revenue_Controller.locked = YES;
+        
         [oppDets_Revenue checkFlag:@"1.7"];
         
         self.oppDets_CloseDate = [[[MHTextField alloc] initWithFrame:CGRectMake(78, 282, 263, 25)] autorelease];
@@ -124,10 +142,11 @@ InformationNeeded_Controller *informationNeeded_Controller;
         [self.view addSubview:self.oppDets_CloseDate];
         self.oppDets_CloseDate_Controller = [[[WSDateFieldController alloc] initWithFieldAndWSDate:oppDets_CloseDate currentDate:bluesheetDataModel.closeDate] autorelease];
         lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/CloseDate"];
-        if(lockN != nil){
-            if([[lockN innerXML] isEqualToString:@"true"] || bluesheetDataModel.manager.value)
-                self.oppDets_CloseDate_Controller.editable = NO;
-        }
+        if(bluesheetDataModel.manager.value)
+            self.oppDets_CloseDate_Controller.editable = NO;
+        else if(lockN != nil && [[lockN innerXML] isEqualToString:@"true"])
+            self.oppDets_CloseDate_Controller.locked = YES;
+        
         [oppDets_CloseDate checkFlag:@"1.8"];
             
         //Competition / Sales Funnel
@@ -150,9 +169,12 @@ InformationNeeded_Controller *informationNeeded_Controller;
                                                value:bluesheetDataModel.compType
                                                multiSelect:NO] autorelease];
         [compSalesFunnel_CompType checkFlag:@"2.6"];
+        lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/CompetitionType"];
         if(bluesheetDataModel.manager.value)
             compSalesFunnel_CompType_Controller.editable = NO;
-            
+        else if((lockN != nil && [[lockN innerXML] isEqualToString:@"true"]))
+            self.compSalesFunnel_CompType_Controller.locked = YES;
+        
         self.compSalesFunnel_specComps = [[[MHTextView alloc] initWithFrame:CGRectMake(349, 155, 326, 71)] autorelease];
         self.compSalesFunnel_specComps.textView.font = [[WSStyle instance] getNormalFont];
         self.compSalesFunnel_specComps.delegate = self;
@@ -162,8 +184,11 @@ InformationNeeded_Controller *informationNeeded_Controller;
                                                 value:bluesheetDataModel.competitors] autorelease];
             self.compSalesFunnel_specComps_Controller.ID = self.ID;
         [compSalesFunnel_specComps checkFlag:@"2.1"];
+        lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/Competition"];
         if(bluesheetDataModel.manager.value)
             compSalesFunnel_specComps_Controller.editable = NO;
+        else if((lockN != nil && [[lockN innerXML] isEqualToString:@"true"]))
+            self.compSalesFunnel_specComps_Controller.locked = YES;
         
         self.compSalesFunnel_myPosVsComp = [[[MHTextField alloc] initWithFrame:CGRectMake(505, 228, 171, 25)] autorelease];
         self.compSalesFunnel_myPosVsComp.font = [[WSStyle instance] getNormalFont];
@@ -175,8 +200,11 @@ InformationNeeded_Controller *informationNeeded_Controller;
                                                   value:bluesheetDataModel.myPosition
                                                   multiSelect:NO] autorelease];
         [compSalesFunnel_myPosVsComp checkFlag:@"2.3"];
+        lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/MyPosition"];
         if(bluesheetDataModel.manager.value)
             compSalesFunnel_myPosVsComp_Controller.editable = NO;
+        else if((lockN != nil && [[lockN innerXML] isEqualToString:@"true"]))
+            self.compSalesFunnel_myPosVsComp_Controller.locked = YES;
             
         compSalesFunnel_plInSalesFun = [[MHTextField alloc] initWithFrame:CGRectMake(476, 255, 200, 25)];
         self.compSalesFunnel_plInSalesFun.font = [[WSStyle instance] getNormalFont];
@@ -188,8 +216,11 @@ InformationNeeded_Controller *informationNeeded_Controller;
                                                    value:bluesheetDataModel.placeInSalesFunnel
                                                    multiSelect:NO] autorelease];
         [compSalesFunnel_plInSalesFun checkFlag:@"2.4"];
+        lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/SalesFunnel"];
         if(bluesheetDataModel.manager.value)
             compSalesFunnel_plInSalesFun_Controller.editable = NO;
+        else if((lockN != nil && [[lockN innerXML] isEqualToString:@"true"]))
+            self.compSalesFunnel_plInSalesFun_Controller.locked = YES;
         
         self.compSalesFunnel_timeForPri = [[[MHTextField alloc] initWithFrame:CGRectMake(476, 282, 200, 25)] autorelease];
         self.compSalesFunnel_timeForPri.font = [[WSStyle instance] getNormalFont];
@@ -201,35 +232,40 @@ InformationNeeded_Controller *informationNeeded_Controller;
                                                  value:bluesheetDataModel.timingForPriorities
                                                  multiSelect:NO] autorelease];
         [compSalesFunnel_timeForPri checkFlag:@"2.5"];
+        lockN = [bluesheetDataModel.applicationData Get:@"Options/LockFields/TimingsFP"];
         if(bluesheetDataModel.manager.value)
             compSalesFunnel_timeForPri_Controller.editable = NO;
+        else if((lockN != nil && [[lockN innerXML] isEqualToString:@"true"]))
+            self.compSalesFunnel_timeForPri_Controller.locked = YES;
+        
+        
         //ICP
         self.icpController = [[[ICP_Controller alloc] doInit:icp_ICCTable ID:ID] autorelease];
         if(bluesheetDataModel.manager.value)
             icpController.enabled = NO;
         NSMutableArray *buyInf_Controllers = [[NSMutableArray alloc] init];
-        self.buyInf_Involved_Controller = [[[BuyingInfluences_Involved_Controller alloc] doInit:buyInf_Involved data:[[[[WSDataModelManager instance] getByID:ID].fileData Get:@"Influences"] retain] ID:ID] autorelease];
+        self.buyInf_Involved_Controller = [[[BuyingInfluences_Involved_Controller alloc] doInit:buyInf_Involved data:[[[WSDataModelManager instance] getByID:ID].fileData Get:@"Influences"] ID:ID] autorelease];
         if(bluesheetDataModel.manager.value)
             self.buyInf_Involved_Controller.enabled = NO;
-        self.buyInf_Results_Controller = [[[BuyingInfluences_Results_Controller alloc] doInit:buyInf_Results data:[[[[WSDataModelManager instance] getByID:ID].fileData Get:@"Influences"] retain] ID:ID] autorelease];
+        self.buyInf_Results_Controller = [[[BuyingInfluences_Results_Controller alloc] doInit:buyInf_Results data:[[[WSDataModelManager instance] getByID:ID].fileData Get:@"Influences"] ID:ID] autorelease];
         if(bluesheetDataModel.manager.value)
             self.buyInf_Results_Controller.enabled = NO;
-        self.buyInf_Covered_Controller = [[[BuyingInfluences_Covered_Controller alloc] doInit:buyInf_Covered data:[[[[WSDataModelManager instance] getByID:ID].fileData Get:@"Influences"] retain] ID:ID] autorelease];
+        self.buyInf_Covered_Controller = [[[BuyingInfluences_Covered_Controller alloc] doInit:buyInf_Covered data:[[[WSDataModelManager instance] getByID:ID].fileData Get:@"Influences"] ID:ID] autorelease];
         [buyInf_Controllers addObject:[buyInf_Involved_Controller.tableViewController autorelease]];
         [buyInf_Controllers addObject:[buyInf_Results_Controller.tableViewController autorelease]];
         [buyInf_Controllers addObject:[buyInf_Covered_Controller.tableViewController autorelease]];
         self.buyInf_Group_Controller = [[[WSTableViewGroupController alloc] initWithTableViews:buyInf_Controllers] autorelease];
-        self.summ_Strengths_Controller = [[[Summary_Strengths_Controller alloc] doInit:summ_Strengths data:[[[[WSDataModelManager instance] getByID:ID].fileData Get:@"Strengths"] retain] ID:ID] autorelease];
+        self.summ_Strengths_Controller = [[[Summary_Strengths_Controller alloc] doInit:summ_Strengths data:[[[WSDataModelManager instance] getByID:ID].fileData Get:@"Strengths"] ID:ID] autorelease];
         if(bluesheetDataModel.manager.value)
             self.summ_Strengths_Controller.enabled = NO;
-        self.summ_RedFlags_Controller = [[[Summary_RedFlags_Controller alloc] doInit:summ_RedFlags data:[[[[WSDataModelManager instance] getByID:ID].fileData Get:@"RedFlags"] retain] ID:ID] autorelease];
+        self.summ_RedFlags_Controller = [[[Summary_RedFlags_Controller alloc] doInit:summ_RedFlags data:[[[WSDataModelManager instance] getByID:ID].fileData Get:@"RedFlags"] ID:ID] autorelease];
         if(bluesheetDataModel.manager.value)
             self.summ_RedFlags_Controller.enabled = NO;
         self.possActions_Controller = [[[PossibleActions_Controller alloc] doInit:possActions data:[[[WSDataModelManager instance] getByID:ID].fileData Get:@"Actions"] ID:ID] autorelease];
         if(bluesheetDataModel.manager.value)
             self.possActions_Controller.enabled = NO;
-        self.bestActionPlan_Controller = [[[BestActionPlan_Controller alloc] doInit:bestActionPlan data:[[[[WSDataModelManager instance] getByID:ID].fileData Get:@"Actions"] retain] ID:ID] autorelease];
-        self.informationNeeded_Controller = [[[InformationNeeded_Controller alloc] doInit:informationNeeded data:[[[[WSDataModelManager instance] getByID:ID].fileData Get:@"BestInfos"] retain] ID:ID] autorelease];
+        self.bestActionPlan_Controller = [[[BestActionPlan_Controller alloc] doInit:bestActionPlan data:[[[WSDataModelManager instance] getByID:ID].fileData Get:@"Actions"] ID:ID] autorelease];
+        self.informationNeeded_Controller = [[[InformationNeeded_Controller alloc] doInit:informationNeeded data:[[[WSDataModelManager instance] getByID:ID].fileData Get:@"BestInfos"] ID:ID] autorelease];
         if(bluesheetDataModel.manager.value)
             self.informationNeeded_Controller.enabled = NO;
         bluesheetDataModel.lastSave = [bluesheetDataModel createSaveXML];
@@ -247,6 +283,101 @@ InformationNeeded_Controller *informationNeeded_Controller;
 	}
 	self.modalInPopover = YES;
 	return self;
+}
+-(void)BuildCustomHeader{
+    BlueSheetDataModel *bluesheetDataModel = (BlueSheetDataModel *)[[WSDataModelManager instance] getByID:ID];
+    WSXMLObject *headerN = [bluesheetDataModel.applicationData Get:@"Header"];
+    WSXMLObject *serverPathN = [bluesheetDataModel.applicationData Get:@"ServerPath"];
+    WSXMLObject *logoFileN = [bluesheetDataModel.applicationData Get:@"LogoFile"];
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 715, 44)];
+    headerView.backgroundColor = [WSUtils UIColorFromHex:@"00529B"];
+    if(headerN != nil){
+        WSXMLObject *iPadSectionsN = [headerN Get:@"iPadSections"];
+        if(iPadSectionsN != nil){
+            [self.view addSubview:headerView];
+            UIImage *mhLogoImg = [UIImage imageWithContentsOfFile:[[iPadSectionsN GetByAttributeValue:@"type" attValue:@"mhlogo"] GetAttribute:@"src"]];
+            UIImage *clientLogoImg = [UIImage imageWithContentsOfFile:[[iPadSectionsN GetByAttributeValue:@"type" attValue:@"clientlogo"] GetAttribute:@"src"]];
+            
+            NSString *s1 = [self GetTypeByOrder:@"1" node:iPadSectionsN];
+            NSString *s2 = [self GetTypeByOrder:@"2" node:iPadSectionsN];
+            NSString *s3 = [self GetTypeByOrder:@"3" node:iPadSectionsN];
+            
+            float mhLogoWidPer = mhLogoImg.size.width / headerView.frame.size.width * 100;
+            float clientLogoWidPer = clientLogoImg.size.width / headerView.frame.size.width * 100;
+            float textWidPer = 100 - (mhLogoWidPer + clientLogoWidPer);
+            
+            float w1 = 0;
+            float w2 = 0;
+            float w3 = 0;
+            if([s1 isEqualToString:@"mhlogo"])
+                w1 = mhLogoWidPer;
+            else if([s1 isEqualToString:@"clientlogo"])
+                w1 = clientLogoWidPer;
+            else w1 = textWidPer;
+            
+            if([s2 isEqualToString:@"mhlogo"])
+                w2 = mhLogoWidPer;
+            else if([s2 isEqualToString:@"clientlogo"])
+                w2 = clientLogoWidPer;
+            else w2 = textWidPer;
+            
+            if([s3 isEqualToString:@"mhlogo"])
+                w3 = mhLogoWidPer;
+            else if([s3 isEqualToString:@"clientlogo"])
+                w3 = clientLogoWidPer;
+            else w3 = textWidPer;
+            
+            CGRect rectOne = CGRectMake(0, 0, (headerView.frame.size.width / 100) * w1, headerView.frame.size.height);
+            CGRect rectTwo = CGRectMake(rectOne.size.width, 0, headerView.frame.size.width - ((headerView.frame.size.width / 100) * (w1 + w3)), headerView.frame.size.width);
+            CGRect rectThree = CGRectMake(rectOne.size.width + rectTwo.size.width, 0, (headerView.frame.size.width / 100) * w3, headerView.frame.size.height);
+            
+            UIView *v1 = [[UIView alloc] initWithFrame:rectOne];
+            [headerView addSubview:v1];
+            UIView *v2 = [[UIView alloc] initWithFrame:rectTwo];
+            [headerView addSubview:v2];
+            UIView *v3 = [[UIView alloc] initWithFrame:rectThree];
+            [headerView addSubview:v3];
+            
+            UIImageView *mhLogoView = [[[UIImageView alloc] initWithImage:mhLogoImg] autorelease]; 
+            if([s1 isEqualToString:@"mhlogo"])
+                [v1 addSubview:mhLogoView];
+            else if([s2 isEqualToString:@"mhlogo"])
+                [v2 addSubview:mhLogoView];
+            else
+                [v3 addSubview:mhLogoView];
+            
+            UIImageView *clientLogoView = [[[UIImageView alloc] initWithImage:clientLogoImg] autorelease]; 
+            if([s1 isEqualToString:@"clientlogo"])
+                [v1 addSubview:clientLogoView];
+            else if([s2 isEqualToString:@"clientlogo"])
+                [v2 addSubview:clientLogoView];
+            else
+                [v3 addSubview:clientLogoView];
+            UILabel *lblView = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, rectThree.size.width, rectThree.size.height)] autorelease];
+            WSXMLObject *lblN = [[WSXMLObject alloc] init:[WSUtils URLDecode:[[iPadSectionsN GetByAttributeValue:@"type" attValue:@"text"] GetAttribute:@"src"]]];
+            WSXMLObject *tN = [lblN Get:@"P/FONT"];
+            lblView.text = [tN innerXML];
+            lblView.backgroundColor = [UIColor clearColor];
+            lblView.font = [[WSStyle instance] mediumFont];
+            lblView.textAlignment = UITextAlignmentRight;
+            lblView.lineBreakMode = UILineBreakModeWordWrap;
+            if([s1 isEqualToString:@"text"])
+                [v1 addSubview:lblView];
+            else if([s2 isEqualToString:@"text"])
+                [v2 addSubview:lblView];
+            else
+                [v3 addSubview:lblView];
+        }
+    }
+    else if(serverPathN != nil && logoFileN != nil){
+        [self.view addSubview:headerView];
+        UIImage *logoFileImg = [UIImage imageNamed:[logoFileN innerXML]];
+        UIImageView *imgView = [[[UIImageView alloc] initWithImage:logoFileImg] autorelease];
+        [headerView addSubview:imgView];
+    }
+}
+-(NSString *)GetTypeByOrder:(NSString *)order node:(WSXMLObject *)theNode{
+    return [[theNode GetByAttributeValue:@"order" attValue:order] GetAttribute:@"type"];
 }
 -(void)btnTouchedUpInside:(NSNotification *)notification{
     WSButtonController *sbtn = (WSButtonController *)[notification object];
@@ -322,14 +453,17 @@ InformationNeeded_Controller *informationNeeded_Controller;
     [compSalesFunnel_timeForPri release];
     [compSalesFunnel_timeForPri removeFromSuperview];
 	[compSalesFunnel_timeForPri_Controller release];
-     
+    
     //Tables
     [icp_ICCTable release];
 	[icpController release];
     
 	[buyInf_Involved release];
+    [buyInf_Involved_Controller release];
 	[buyInf_Results release];
+    [buyInf_Results_Controller release];
 	[buyInf_Covered release];
+    [buyInf_Covered_Controller release];
     
 	[summ_Strengths release];
 	[summ_Strengths_Controller release];
@@ -345,6 +479,8 @@ InformationNeeded_Controller *informationNeeded_Controller;
     
 	[informationNeeded release];
 	[informationNeeded_Controller release];
+    
     [super dealloc];
+     
 }
 @end

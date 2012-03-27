@@ -18,7 +18,6 @@
 
 -(id)initWithXML:(WSXMLObject *)theXMLObj ID:(NSString *)theID{
 	[super initWithXML:theXMLObj ID:theID];
-	//[self initVarsSub];
 	self.xmlObj = theXMLObj;
 	if(xmlObj != nil){
 		WSXMLObject *obj = [xmlObj Get:@"Information"];
@@ -78,11 +77,11 @@
 	return [retString autorelease];
 }
 -(id)copyWithZone:(NSZone *)zone{
-	BSBestInfo *copy = [[[self class] allocWithZone:zone] initWithBSBestInfo:self];
+	BSBestInfo *copy = [[BSBestInfo alloc] initWithBSBestInfo:self];
 	return copy;
 }
 -(void)dealloc{
-    [sourceDescription release];
-	[super dealloc];
+    //[super dealloc];
+    //[sourceDescription release];
 }
 @end

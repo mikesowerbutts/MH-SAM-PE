@@ -114,7 +114,7 @@
             [printDialogController showPopoverFromRect:tRect];
         }
         else if(sbtn == help_Controller){
-            [Owner showWebBrowser:[NSString stringWithFormat:@"%@/MH_PE_iPad_Blue_Sheet_Help.pdf", [WSUtils GetResourcesPath]] title:@"Help" mode:@"PDF"];
+            [Owner showWebBrowser:[NSString stringWithFormat:@"%@/MH_PE_iPad_Blue_Sheet_20110320.pdf", [WSUtils GetResourcesPath]] title:@"Help" mode:@"PDF"];
         }
         else if(sbtn == save_Controller)
             [bluesheetDataModel saveData];

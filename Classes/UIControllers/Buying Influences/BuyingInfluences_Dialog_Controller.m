@@ -20,10 +20,13 @@
 	BlueSheetDataModel *bluesheetDataModel = (BlueSheetDataModel *)[[WSDataModelManager instance] getByID:ID];
 	if(theDataObjID != nil){
 		BSInfluence *infTemp = [[bluesheetDataModel getInfluences] getObjectByID:theDataObjID];
-		self.influence = [[infTemp copyObject] autorelease];//Leak
+        if(infTemp != nil)
+            self.influence = [[infTemp copyObject] autorelease];
+        else
+            self.influence = [[[BSInfluence alloc] init:theID] autorelease];
 	}
 	else
-		self.influence = [[[BSInfluence alloc] init:theID] autorelease];//Leak
+		self.influence = [[[BSInfluence alloc] init:theID] autorelease];
 	if(influence != nil){
         //Involved
         WSContact *con = (WSContact *)[[[[WSDataModelManager instance] getByID:ID] getContacts] getContactByID:influence.contactID];
@@ -96,6 +99,7 @@
     //Involved
     [influence setTheContactID:[nameField_Controller.selectedPairs.items count] > 0 ? [[nameField_Controller.selectedPairs.items objectAtIndex:0] key] : @""];
     influence.roles = [rolesField_Controller.selectedPairs.items count] > 0 ? rolesField_Controller.selectedPairs : influence.roles;
+    [influence.roles describe];
     influence.degree = [degreeField_Controller.selectedPairs.items count] > 0 ? [degreeField_Controller.selectedPairs.items objectAtIndex:0] : influence.degree;
     influence.mode = [modeField_Controller.selectedPairs.items count] > 0 ? [modeField_Controller.selectedPairs.items objectAtIndex:0] : influence.mode;
     

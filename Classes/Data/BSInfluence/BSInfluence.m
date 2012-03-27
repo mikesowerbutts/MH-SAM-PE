@@ -105,7 +105,7 @@
  	return [retString autorelease];
 }
 -(void)dealloc{
-	NSLog(@"release influence");
+	//NSLog(@"release influence");
 	[super dealloc];
 	[nameTitle release];
 	[contactID release];
